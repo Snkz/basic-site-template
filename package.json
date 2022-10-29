@@ -1,0 +1,17 @@
+{
+  "author": "Abdi Dahir <abdi.dahir@outlook.com> (abdi.dahir.ca)",
+  "name": "basic-site-template",
+  "description": "website template",
+  "version": "0.0.0",
+  "homepage": "abdi.dahir.ca",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/snkz/basic-site-template.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

@@ -1,0 +1,68 @@
+@font-face { font-family: FSEX; src: url('fonts/weirdguysfont.ttf'); } 
+@font-face { font-family: Terminus; src: url('fonts/TerminusTTF-4.39.ttf'); } 
+canvas { width: 100%; height: 100% } 
+html { width: 100%; height: 100% } 
+body { background-image:url('textures/white-lines.gif'); background-color: #FFFFFF;
+  font: 11px/19px Verdana, Arial, Helvetica, sans-serif; 
+  color: #000000; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 
+100%; width: 100%; height:100%;}
+
+#wrapper { margin: 0px; width: 1200px; }
+#header {} 
+#title { float: left; margin: 20px 40px;}
+#blurb { text-align: right; margin: 10px 0px 0px 0px !important;}
+#blurb-small { font-size: 0.62em; text-align: right; margin: 10px 0px 0px 0px !important;}
+#icon { width: 128px; height: 128px; padding-left: 30px; float: left;} 
+#data { clear: left; margin: 0px 10px; overflow:hidden;} 
+#side { width: 168px; margin: 0px auto; float: left; margin-right: 20px; 
+padding-bottom: 1000px; margin-bottom: -1000px; } 
+#location { margin: 0px 0px; }
+#leftbar { float: right; margin: 0px 10px 0px 10px; width: 148px;} 
+#section80 { float: right;  display: block; margin: -5px 0px -10px 0px;} 
+#section { text-align: right; margin-bottom: -10px ; padding: 0px;} 
+#content {  } 
+#larrow { display: inline; text-align: right; font-size: 14px; margin: 0px 0px 0px 0px;
+cursor: pointer; cursor: hand;}
+#rarrow { display: inline; text-align: right; font-size: 14px; float: right; 
+cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
+.rainbow { color: #0000AA }
+#block {background-color: #0000AA11; float: left; width: 992px; overflow: hidden; 
+padding-bottom: 1000px; margin-bottom: -1000px; display: block;}
+#block-blog {background-color: #0000AA11; float: left; width: 992px; overflow: hidden; display: block;}
+.code {
+  font-family: monospace;
+  margin-left: 20px; 
+  margin-right: 100px; 
+}
+
+#seperator {background-color: #FFFFFF !important; padding-bottom: 20px; }
+#block-text{margin: 10px 20px; color: #000000; text-align: left; margin-right:10px;}
+#block-text a{display:block; margin-left: 10px; width: 100%}
+#currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
+padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
+#ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
+-ms-user-select:none; user-select:none;}
+ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
+a { text-decoration: none; display: block; width: 168px;}
+a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; 
+  background-color #0000AA11;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.reselect {
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.inlinea { display: inline !important; width: auto !important; margin: 0px !important;}
