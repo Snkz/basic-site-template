@@ -27,7 +27,7 @@ body {
 
 #blurb { 
   text-align: right; 
-  margin: 10px 0px 0px 0px !important;
+  margin: 10px 0px -10px 0px !important;
 }
 
 #blurb-small { 
@@ -44,15 +44,10 @@ body {
   margin-left: 48px; 
 } 
 
-#data { 
-  clear: left; 
-  margin: 0px 10px; 
-  overflow:hidden;
-} 
-
 #side { 
+  clear: left; 
   width: 168px; 
-  margin: 0px 20px -1000px auto; 
+  margin: 0px 0px -1000px 0px; 
   float: left; 
   padding-bottom: 1000px;
 }
@@ -60,12 +55,6 @@ body {
 #location { 
   margin: 0px 0px; 
 }
-
-#leftbar { 
-  float: right; 
-  margin: 0px 10px 0px 10px; 
-  width: 148px;
-} 
 
 #section80 { 
   float: right;
@@ -78,23 +67,6 @@ body {
   margin-bottom: -10px; 
   padding: 0px;
 } 
-
-#larrow { 
-  display: inline; 
-  text-align: right; 
-  font-size: 14px;
-  margin: 0px 0px 0px 0px;
-  cursor: pointer; 
-}
-
-#rarrow { 
-  display: inline; 
-  text-align: right; 
-  font-size: 14px; 
-  float: right; 
-  cursor: pointer; 
-  margin: 0px 0px 0px 0px; 
-}
 
 .rainbow { 
   color: #0000AA; 
@@ -112,7 +84,7 @@ body {
 
 #block-blog {
   background-color: #0000AA11;
-  float: left;
+  float: right;
   width: 992px;
   overflow: hidden;
   display: block;
@@ -141,18 +113,6 @@ body {
   width: 100%;
 }
 
-#currate { 
-  background-color: #0000AA11; 
-  text-align: right; 
-  display: inline-block; 
-  font-size: 8px; 
-  margin: 0px 8px 0px 0px; 
-  padding: 0px 5px 0px 0px; 
-  float: right;
-  width: 108px;
-  cursor: default;
-}
-
 #ratepicker { 
   margin: 0px 10px 0px 10px; 
   -moz-user-select: none; 
@@ -164,7 +124,7 @@ body {
 ul li { 
   text-align: right; 
   list-style-type: none; 
-  margin: 0; 
+  margin: 10px 0px; 
   padding: 0;
 }
 
