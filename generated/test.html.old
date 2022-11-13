@@ -1,12 +1,14 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <page> test </page>
+    <title> test </title>
   </head>
   <body>
     
-     -- list
-     -- list
+    <div id="side">
+       -- list
+       -- list
+    </div> <!-- side -->
      -- list
   </body>
 </html>
