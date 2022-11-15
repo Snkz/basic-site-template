@@ -1,5 +1,6 @@
-project_path=~/git/basic-site-template/generated
+generated_path=~/git/basic-site-template/generated
 template_path=~/git/basic-site-template/template
+content_path=~/git/basic-site-template/content
 program_name=$0
 page=`tr [A-Z] [a-z] <<< ${1}`
 header=""
@@ -9,7 +10,7 @@ blog=""
 
 shift 1
 
-while getopts "t:v:" opt; do
+while getopts "t:c:v:" opt; do
   case ${opt} in
     v) 
       echo "Setting: $OPTARG" >&1
@@ -18,6 +19,10 @@ while getopts "t:v:" opt; do
     t) 
       echo "Setting: $OPTARG" >&1
       template+=$OPTARG
+      ;;
+    c) 
+      echo "Setting: $OPTARG" >&1
+      content+=$OPTARG
       ;;
     \?) 
       echo "Ignoring: $OPTARG" >&1
@@ -30,31 +35,54 @@ done
 
 shift $((OPTIND - 1))
 
-usage() { echo "Usage: $program_name page [-t template/path/dir/] [-v variables]" 1>&2; exit 1; }
+usage() { echo "Usage: $program_name page [-t template/path/dir/] [-c content/path/dir/]" 1>&2; exit 1; }
 template_formatting_error() { echo "Template Directory layout: $template/header.ini $template/blurb.ini $template/nav.ini $template/blog.ini" 1>&2; exit 1; }
+content_formatting_error() { echo "Content Directory layout: $content/header.txt $content/blurb.txt $content/nav.txt [directory/blogs.txt ...]" 1>&2; exit 1; }
 
 if [ -z "$page" ]; then
   usage
   exit;
 fi
 
+# Setup template path
 if [ -z "$template" ]; then
-  template="${template_path}/default/"
+  template="${template_path}/default"
   echo "template path unset using default path: $template";
 else
   echo "template path set: $template";
 fi
 
-if [ ! -d "$template" ] ||[ ! -f "$template/header.ini" ] || [ ! -f "$template/blurb.ini" ] || [ ! -f "$template/nav.ini" ] || [ ! -f "$template/blog.ini" ]; then
+if [ ! -d "$template/" ] || [ ! -f "$template/header.ini" ] || [ ! -f "$template/blurb.ini" ] || [ ! -f "$template/nav.ini" ] || [ ! -f "$template/blog.ini" ]; then
   template_formatting_error
   exit;
 fi
 
-if [ -f "${project_path}/${page}.html" ]; then
-  echo "$page.html already exists in $project_path";
-  mv "${project_path}/${page}.html" "${project_path}/${page}.html.old";
+# Setup content path 
+if [ -z "$content" ]; then
+  content="${content_path}"
+  echo "content path unset using default path: $content";
+else
+  echo "content path set: $content";
 fi
 
+if [ ! -d "$content" ] || [ ! -f "$content/header.txt" ] || [ ! -f "$content/blurb.txt" ] || [ ! -f "$content/nav.txt" ]; then
+  content_formatting_error
+  exit;
+fi
+
+# Move old index page over (TODO: For all pages we generate we need to do this)
+if [ -f "${generated_path}/${page}.html" ]; then
+  echo "$page.html already exists in $generated_path";
+  mv "${generated_path}/${page}.html" "${generated_path}/${page}.html.old";
+fi
+
+echo "Reading Content..."
+echo " >>> Header ..."
+cat "$content/header.txt" | while read line
+do
+  echo $line
+done
+echo "... done"
 
 export sub_header="BIG WORDS"
 echo "Parsing Header ..."
@@ -88,11 +116,11 @@ echo "... done"
 
 echo "Page: [$page]"
 echo "Template: [$template]"
-echo "Variables [$variables]"
+echo "Content: [$content]"
 
-echo "Creating $project_path/$page.html...";
+echo "Creating $generated_path/$page.html...";
 
-cat <<- _EOF_ > $project_path/$page.html
+cat <<- _EOF_ > $generated_path/$page.html
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="style.css">
