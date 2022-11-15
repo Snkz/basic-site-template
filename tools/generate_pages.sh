@@ -36,7 +36,7 @@ done
 shift $((OPTIND - 1))
 
 usage() { echo "Usage: $program_name page [-t template/path/dir/] [-c content/path/dir/]" 1>&2; exit 1; }
-template_formatting_error() { echo "Template Directory layout: $template/header.ini $template/blurb.ini $template/nav.ini $template/blog.ini" 1>&2; exit 1; }
+template_formatting_error() { echo "Template Directory layout: $template/header.ini $template/blurb.ini $template/nav.ini $template/nav_element.ini $template/blog.ini" 1>&2; exit 1; }
 content_formatting_error() { echo "Content Directory layout: $content/header.txt $content/blurb.txt $content/nav.txt [directory/blogs.txt ...]" 1>&2; exit 1; }
 
 if [ -z "$page" ]; then
@@ -52,7 +52,7 @@ else
   echo "template path set: $template";
 fi
 
-if [ ! -d "$template/" ] || [ ! -f "$template/header.ini" ] || [ ! -f "$template/blurb.ini" ] || [ ! -f "$template/nav.ini" ] || [ ! -f "$template/blog.ini" ]; then
+if [ ! -d "$template/" ] || [ ! -f "$template/header.ini" ] || [ ! -f "$template/blurb.ini" ] || [ ! -f "$template/nav.ini" ] || [ ! -f "$template/nav_element.ini" ] || [ ! -f "$template/blog.ini" ]; then
   template_formatting_error
   exit;
 fi
@@ -75,6 +75,38 @@ if [ -f "${generated_path}/${page}.html" ]; then
   echo "$page.html already exists in $generated_path";
   mv "${generated_path}/${page}.html" "${generated_path}/${page}.html.old";
 fi
+
+
+# For each directory
+  # Read main header.txt (unless a sub is present in directory)
+  # Set env variables (Title, Header, SubHeader)
+  # envsubst the template
+  # save as header var
+  #
+  # Read main blurb.txt (unless a sub is present in directory)
+  # For each line until new line, append line to blurb_content, wrap in <p>
+  # envsubst the template blurb
+  # save as nav var blurb
+  # 
+  # Read main nav.txt (unless a sub is present in directory)
+  # First line is set to nav_header
+  # For each line until new line, set line to nav_contnet 
+  # envsubst the template nav_element, append to nav_element until new line
+  # envsubst the template nav
+  # save as nav var
+  #
+  # Read every file other then the blurb/header/nav labeled ones
+  # First line takes date variable
+  # Second line takes header variable, if new line, header is skipped
+  # Every other line from this point on is read until a new line is met, wrap in <p>
+  # store into variable blog_text
+  # envsubst the template blog
+  # save as nav blog
+  # 
+  # Generate the page according to directory name (no more passing in "page"
+  # Move if overlaps
+  # move to next directory
+
 
 echo "Reading Content..."
 echo " >>> Header ..."
