@@ -28,6 +28,7 @@ body {
 #blurb { 
   text-align: right; 
   margin: 10px 0px -10px 40px !important;
+  overflow-wrap: break-word;
 }
 
 #blurb-small { 

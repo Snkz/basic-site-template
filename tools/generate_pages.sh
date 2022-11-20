@@ -38,6 +38,45 @@ shift $((OPTIND - 1))
 usage() { echo "Usage: $program_name page [-t template/path/dir/] [-c content/path/dir/]" 1>&2; exit 1; }
 template_formatting_error() { echo "Template Directory layout: $template/header.ini $template/blurb.ini $template/nav.ini $template/nav_element.ini $template/blog.ini" 1>&2; exit 1; }
 content_formatting_error() { echo "Content Directory layout: $content/header.txt $content/blurb.txt $content/nav.txt [directory/blogs.txt ...]" 1>&2; exit 1; }
+generate_nav_section() {
+  # Break reached generate a nav section
+  export nav_header="${nav_content[0]}"
+  nav_element=""
+  for ((i=1; i<=${#nav_content[@]}; i++))
+  do
+    export nav_element+="<li id=\"location\">"${nav_content[$i]}"</li>"
+  done
+  nav_data+=`envsubst < "$template/nav.ini"`
+  nav_content=()
+  should_generate_line=0
+}
+
+generate_blog_section() {
+}
+
+generate_page() {
+if [ -f "${generated_path}/${page}.html" ]; then
+  echo "$page.html already exists in $generated_path";
+  mv "${generated_path}/${page}.html" "${generated_path}/${page}.html.old";
+fi
+echo "Creating $generated_path/$page.html...";
+cat <<- _EOF_ > $generated_path/$page.html
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <title> ${title} </title>
+  </head>
+  <body>
+    ${header_data}
+    <div id="side">
+      ${blurb_data}
+      ${nav_data}
+    </div>
+    ${blog_data} 
+  </body>
+</html>
+_EOF_
+}
 
 if [ -z "$page" ]; then
   usage
@@ -107,64 +146,74 @@ fi
   # Move if overlaps
   # move to next directory
 
-
-echo "Reading Content..."
-echo " >>> Header ..."
-cat "$content/header.txt" | while read line
-do
-  echo $line
-done
-echo "... done"
-
-export sub_header="BIG WORDS"
-echo "Parsing Header ..."
-envsubst < "$template/header.ini" | while read line
-do
-  echo $line
-done
-echo "... done"
-
-echo "Parsing Blurb ..."
-envsubst < "$template/blurb.ini" | while read line
-do
-  echo "$line"
-done
-echo "... done"
-
-echo "Parsing Nav ..."
-envsubst < "$template/nav.ini" | while read line
-do
-  echo "$line"
-done
-echo "... done"
-
-echo "Parsing Blog ..."
-envsubst < "$template/blog.ini" | while read line
-do
-  echo "$line"
-done
-echo "... done"
-
-
 echo "Page: [$page]"
 echo "Template: [$template]"
 echo "Content: [$content]"
 
-echo "Creating $generated_path/$page.html...";
+for dir in $content/*/
+do
+  page=${dir%*/}
+  page=${page##*/}
+  echo Parsing Directory: [$dir] ...
+  echo " >>> Header ..."
+  #TODO: Need to test if current directory has a header override
+  # Avoid pipe to preserve scope, pipes create new env
+  header_content=()
+  while read line
+  do
+    if [ ! -z "$line" ]; then
+      header_content+=("$line")
+    fi
+  done < "$content/header.txt"
 
-cat <<- _EOF_ > $generated_path/$page.html
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <title> ${page} </title>
-  </head>
-  <body>
-    ${header}
-    <div id="side">
-      ${blurb} -- list
-      ${nav} -- list
-    </div> <!-- side -->
-    ${blog} -- list
-  </body>
-</html>
-_EOF_
+  export title="${header_content[0]}"
+  export header=${header_content[1]}
+  export sub_header=${header_content[2]}
+  header_data=`envsubst < "$template/header.ini"`
+  export header=""
+  export sub_header=""
+
+  echo " >>> Blurb..."
+  blurb_data=""
+  while read line
+  do
+    if [ ! -z "$line" ]; then
+      # Run template against every line in blurb content
+      export blurb_content=$line
+      blurb_data+=`envsubst < "$template/blurb.ini"`"<br/>"
+    fi
+  done < "$content/blurb.txt"
+
+  echo " >>> Nav..."
+  nav_content=()
+  nav_data=""
+  should_generate_line=0
+  while read line
+  do
+    # Consume lines until a break
+    if [ ! -z "$line" ]; then
+      should_generate_line=1
+      nav_content+=("$line")
+    else
+      generate_nav_section
+    fi
+  done < "$content/nav.txt"
+
+
+  if [ $should_generate_line -eq 1 ]; then
+    generate_nav_section
+  fi
+  should_generate_line=0
+
+  echo " >>> Blog..."
+  blog_content=()
+  blog_data=""
+  should_generate_line=0
+
+  if [ $should_generate_line -eq 1 ]; then
+    generate_blog_section
+  fi
+  should_generate_line=0
+
+  generate_page
+done
