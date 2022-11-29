@@ -2,12 +2,6 @@ links
   <a href="index.html"> blog </a>
   <a href="start.html"> start </a>
   <a href="fall2014.html"> fall 2014 </a>
-  <a href="winter2014.html"> winter 2014 </a>
-  <a href="spring2015.html"> spring 2015 </a>
-  <a href="summer2015.html"> summer 2015 </a>
-  <a href="fall2015.html"> fall 2015 </a>
-  <a href="winter2015.html"> winter 2015 </a>
-  <a href="summer2021.html"> summer 2021 </a>
 
 on the ground
   <del>tdot: bahen center </del>

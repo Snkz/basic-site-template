@@ -2,15 +2,11 @@ generated_path=~/git/basic-site-template/generated
 template_path=~/git/basic-site-template/template
 content_path=~/git/basic-site-template/content
 program_name=$0
-page=`tr [A-Z] [a-z] <<< ${1}`
-header=""
-blurb=""
-nav=""
-blog=""
+first_arg=`tr [A-Z] [a-z] <<< ${1}`
 
 shift 1
 
-while getopts "t:c:v:" opt; do
+while getopts "t:c:v:h:" opt; do
   case ${opt} in
     v) 
       echo "Setting: $OPTARG" >&1
@@ -19,6 +15,9 @@ while getopts "t:c:v:" opt; do
     t) 
       echo "Setting: $OPTARG" >&1
       template+=$OPTARG
+      ;;
+    h) 
+      usage
       ;;
     c) 
       echo "Setting: $OPTARG" >&1
@@ -35,9 +34,11 @@ done
 
 shift $((OPTIND - 1))
 
-usage() { echo "Usage: $program_name page [-t template/path/dir/] [-c content/path/dir/]" 1>&2; exit 1; }
+usage() { echo "Usage: $program_name [-t template/path/dir/] [-c content/path/dir/] [-h]" 1>&2; exit 1; }
 template_formatting_error() { echo "Template Directory layout: $template/header.ini $template/blurb.ini $template/nav.ini $template/nav_element.ini $template/blog.ini" 1>&2; exit 1; }
 content_formatting_error() { echo "Content Directory layout: $content/header.txt $content/blurb.txt $content/nav.txt [directory/blogs.txt ...]" 1>&2; exit 1; }
+blog_formatting_error() { echo "Blog files must contain either a new line, a data or a header followed by a new line or another data and a new line before text appears" 1>&2; exit 1; }
+
 generate_nav_section() {
   # Break reached generate a nav section
   export nav_header="${nav_content[0]}"
@@ -48,10 +49,6 @@ generate_nav_section() {
   done
   nav_data+=`envsubst < "$template/nav.ini"`
   nav_content=()
-  should_generate_line=0
-}
-
-generate_blog_section() {
 }
 
 generate_page() {
@@ -67,18 +64,20 @@ cat <<- _EOF_ > $generated_path/$page.html
     <title> ${title} </title>
   </head>
   <body>
-    ${header_data}
-    <div id="side">
-      ${blurb_data}
-      ${nav_data}
+    <div id = "wrapper" class="noselect">
+      ${header_data}
+      <div id="side">
+        ${blurb_data}
+        ${nav_data}
+      </div>
+      ${blog_data} 
     </div>
-    ${blog_data} 
   </body>
 </html>
 _EOF_
 }
 
-if [ -z "$page" ]; then
+if [ ! -z "$first_arg" ]; then
   usage
   exit;
 fi
@@ -146,7 +145,6 @@ fi
   # Move if overlaps
   # move to next directory
 
-echo "Page: [$page]"
 echo "Template: [$template]"
 echo "Content: [$content]"
 
@@ -196,6 +194,7 @@ do
       nav_content+=("$line")
     else
       generate_nav_section
+      should_generate_line=0
     fi
   done < "$content/nav.txt"
 
@@ -205,15 +204,65 @@ do
   fi
   should_generate_line=0
 
+
+  # Read every file other then the blurb/header/nav labeled ones
+  # First line takes date variable
+  # Second line takes header variable, if new line, header is skipped
+  # Every other line from this point on is read until a new line is met, wrap in <p>
+  # store into variable blog_text
+  # envsubst the template blog
+  # save as nav blog
+  # 
+  # Generate the page according to directory name (no more passing in "page"
+  # Move if overlaps
+  # move to next directory
   echo " >>> Blog..."
-  blog_content=()
   blog_data=""
-  should_generate_line=0
+  #sorted_dir=$(echo ${dir}* | xargs -n1 | sort | xargs)
+  sorted_dir=$(echo ${dir}*)
+  for file in ${sorted_dir}
+  do
+    blog_path=${file%*/}
+    blog=${blog_path##*/}
+    blog_content=()
+    echo "  >>> Parsing File: [$blog] ..."
+    while read line
+    do
+      blog_content+=("$line")
+    done < "$blog_path"
 
-  if [ $should_generate_line -eq 1 ]; then
-    generate_blog_section
-  fi
-  should_generate_line=0
+    blog_offset=0
+    export blog_date=""
+    export blog_header=""
+    if [ -z "${blog_content[0]}" ]; then
+      blog_offset=1
+    elif [ ! -z "${blog_content[1]}" ]; then
+      blog_offset=3
+      export blog_date="${blog_content[0]}"
+      export blog_header="${blog_content[1]}"
+    else
+      blog_offset=2
+      export blog_date="${blog_content[0]}"
+    fi
+    blog_text=""
+    for ((i=${blog_offset}; i<=${#blog_content[@]}; i++))
+    do
+      if [ $blog_offset == 1 ]; then
+        export blog_text+=""${blog_content[$i]}"</br>"
+      elif [ $blog_offset == 2 ]; then
+        export blog_text+="<p class=\"special\">"${blog_content[$i]}"</p>"
+      elif [ $blog_offset == 3 ]; then
+        export blog_text+="<p>"${blog_content[$i]}"</p>"
+      else
+        blog_formatting_error
+      fi
+    done
+    blog_result=`envsubst < "$template/blog.ini"` 
+    blog_data="$blog_result $blog_data"
+  done
 
+  echo "Page: [$page]"
   generate_page
 done
+
+exit 0

@@ -88,7 +88,6 @@ body {
   float: right;
   width: 992px;
   overflow: hidden;
-  display: block;
 }
 
 .code {
@@ -109,9 +108,7 @@ body {
 }
 
 #block-text a {
-  display:block; 
-  margin-left: 10px; 
-  width: 100%;
+  display: inline !important; 
 }
 
 #ratepicker { 
@@ -164,3 +161,10 @@ a:hover {
   width: auto !important; 
   margin: 0px !important;
 }
+
+.special {
+  display:block;
+  margin: 0px 0px 0px 10px;
+  width: 100%;
+}
+

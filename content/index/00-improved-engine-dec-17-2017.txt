@@ -1,0 +1,13 @@
+Dec 17 2017:
+Improved engine and new flames
+
+It's been a crazy year, I've moved to Vancouver, jumped jobs twice and am more deadset then ever on building this thing out
+
+I've learned alot at artillery and maxis, mostly about engine design and entity component systems. I've trashed most of my old code and rebuilt 
+the voxel engine as a proper game engine. I've put in alot of work on the lua bindings and now have a clean interface between lua code and c++ code
+that's all handled behind the scenes my the engine. All C++ components and events can be have lua code bound to them by simply adding handlers such as OnEventName(arg1, ... argN) with no fancy bridge code other then a single macro, DEFINE_EVENT(onEventName, argType1 ... argTypeN). Theres also macros for exposing any memeber variable of a class to lua allowing for the lua file to both read and set the value. Its cool. I'll show it off here at somepoint.
+
+Thats all nice and everything but I still haven't built a new game since 2014 and I want that to change this coming year. I'm working fast towards a prototype trying to minimize distractions (Its so hard to not work on fun rendering stuff). My current fulltime job has great work life balance so things are looking up.
+
+<strong> You will hear from me again soon! </strong>
+
