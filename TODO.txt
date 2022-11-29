@@ -1,0 +1,6 @@
+- Write tool to move generated files to top directory (must ignore .olds?)
+- Create github hook on digital ocean server 
+- Write script that pulls latest changes, runs generate site, runs move to
+  /var/www level
+- Test creating new "commits" of content straight on github site
+- Cutup current site and see if it works with my shit
