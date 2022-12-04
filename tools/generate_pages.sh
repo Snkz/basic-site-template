@@ -108,13 +108,6 @@ if [ ! -d "$content" ] || [ ! -f "$content/header.txt" ] || [ ! -f "$content/blu
   exit;
 fi
 
-# Move old index page over (TODO: For all pages we generate we need to do this)
-if [ -f "${generated_path}/${page}.html" ]; then
-  echo "$page.html already exists in $generated_path";
-  mv "${generated_path}/${page}.html" "${generated_path}/${page}.html.old";
-fi
-
-
 # For each directory
   # Read main header.txt (unless a sub is present in directory)
   # Set env variables (Title, Header, SubHeader)
@@ -204,18 +197,6 @@ do
   fi
   should_generate_line=0
 
-
-  # Read every file other then the blurb/header/nav labeled ones
-  # First line takes date variable
-  # Second line takes header variable, if new line, header is skipped
-  # Every other line from this point on is read until a new line is met, wrap in <p>
-  # store into variable blog_text
-  # envsubst the template blog
-  # save as nav blog
-  # 
-  # Generate the page according to directory name (no more passing in "page"
-  # Move if overlaps
-  # move to next directory
   echo " >>> Blog..."
   blog_data=""
   #sorted_dir=$(echo ${dir}* | xargs -n1 | sort | xargs)
