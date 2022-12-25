@@ -1,15 +1,22 @@
 generated_path=~/git/basic-site-template/generated
-destination_path=~/git/basic-site-template/site
-program_name=$0
-first_arg=`tr [A-Z] [a-z] <<< ${1}`
+destination_path=/var/www/tests
+destination_server=dahir.ca
 
+program_name=$0
+username=${1}
+shift 1
+password=${1}
 shift 1
 
-while getopts "p:g:h:" opt; do
+while getopts "p:s:g:h:" opt; do
   case ${opt} in
     p) 
       echo "Setting: $OPTARG" >&1
       destination+=$OPTARG
+      ;;
+    s) 
+      echo "Setting: $OPTARG" >&1
+      server+=$OPTARG
       ;;
     g) 
       echo "Setting: $OPTARG" >&1
@@ -29,13 +36,27 @@ done
 
 shift $((OPTIND - 1))
 
-usage() { echo "Usage: $program_name [-p destination/path/dir] [-g generated/path/dir] [-h]" 1>&2; exit 1; }
-destination_formatting_error() { echo "Destination path $destination is not a directory" 1>&2; exit 1; }
+usage() { echo "Usage: $program_name username password [-s server.com] [-p /destination/on/server] [-g generated/path/dir] [-h]" 1>&2; exit 1; }
 generated_formatting_error() { echo "Destination path $generated is not a directory" 1>&2; exit 1; }
 
-if [ ! -z "$first_arg" ]; then
+if [ -z "$username" ]; then
   usage
   exit;
+fi
+
+if [ -z "$password" ]; then
+  usage
+  exit;
+fi
+
+# Setup server path
+if [ -z "$server" ]; then
+  #server="${username}@${destination_server}"
+  server="${destination_server}"
+  echo "server path unset using default path: $server";
+else
+  #server="${username}@${server}"
+  echo "server path set: $server";
 fi
 
 # Setup destination path
@@ -44,11 +65,6 @@ if [ -z "$destination" ]; then
   echo "destination path unset using default path: $destination";
 else
   echo "destination path set: $destination";
-fi
-
-if [ ! -d "$destination" ]; then
-  destination_formatting_error
-  exit;
 fi
 
 # Setup generated path
@@ -64,20 +80,20 @@ if [ ! -d "$generated" ]; then
   exit;
 fi
 
+echo "Server: [$server]"
 echo "Destination: [$destination]"
 echo "Generated: [$generated]"
+echo "User: [$username:$password]"
 
 for file in $generated/*
 do
   page=${file%*/}
   page=${page##*/}
   if [[ $page == *".html" ]]; then
-    if [ -f "${destination}/${page}" ]; then
-      echo "$page already exists in $destination";
-      mv "${destination}/${page}" "${destination}/${page}.old";
-    fi
-    echo "Moving [$page] to [$destination] ..."
-    mv "${file}" "${destination}/${page}";
+    echo "SCP [$page] to [$server:$destination] ..."
+    #mv "${file}" "${destination}/${page}";
+    #scp "${file}" "${server}:${destination}/${page}";
+    curl --insecure --user ${username}:${password} -T ${file} sftp://"${server}/${destination}/${page}";
   fi
 done
 
