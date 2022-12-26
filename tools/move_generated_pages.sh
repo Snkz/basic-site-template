@@ -112,6 +112,10 @@ if [ -d "font" ]; then
   scp -r "font" "${username}@${server}:${destination}/";
 fi
 
+if [ -d "textures" ]; then
+  scp -r "textures" "${username}@${server}:${destination}/";
+fi
+
 if [ -f "style.css" ]; then
   scp "style.css" "${username}@${server}:${destination}/";
 fi
