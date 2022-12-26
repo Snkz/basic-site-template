@@ -1,6 +1,7 @@
 generated_path=~/git/basic-site-template/generated
 destination_path=/var/www/tests
 destination_server=dahir.ca
+assets_copied=0
 
 program_name=$0
 username=${1}
@@ -85,6 +86,7 @@ echo "Destination: [$destination]"
 echo "Generated: [$generated]"
 echo "User: [$username:$password]"
 
+# Copy over all the generated files
 for file in $generated/*
 do
   page=${file%*/}
@@ -92,9 +94,26 @@ do
   if [[ $page == *".html" ]]; then
     echo "SCP [$page] to [$server:$destination] ..."
     #mv "${file}" "${destination}/${page}";
-    #scp "${file}" "${server}:${destination}/${page}";
+    #scp "${file}" "${username}@${server}:${destination}/${page}";
     curl --insecure --user ${username}:${password} -T ${file} sftp://"${server}/${destination}/${page}";
   fi
 done
+
+# Copy over static directories
+if [ -d "js" ]; then
+  scp -r "js" "${username}@${server}:${destination}/";
+fi
+
+if [ -d "game" ]; then
+  scp -r "game" "${username}@${server}:${destination}/";
+fi
+
+if [ -d "font" ]; then
+  scp -r "font" "${username}@${server}:${destination}/";
+fi
+
+if [ -f "style.css" ]; then
+  scp "style.css" "${username}@${server}:${destination}/";
+fi
 
 exit 0
